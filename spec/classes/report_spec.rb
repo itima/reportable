@@ -285,6 +285,12 @@ describe Saulabs::Reportable::Report do
               result[6][1].should  == 0.0
             end
 
+            it 'should fallback to column name if :value_column is missing' do
+              report = Saulabs::Reportable::Report.new(User, :registrations, :aggregation => :sum)
+
+              report.value_column.should == "registrations"
+            end
+
             unless live_data
 
               it 'should return correct data for aggregation :count when :end_date is specified' do
@@ -549,11 +555,6 @@ describe Saulabs::Reportable::Report do
       it 'should raise an error if an invalid aggregation is specified' do
         lambda { @report.send(:ensure_valid_options, { :aggregation => :invalid }) }.should raise_error(ArgumentError)
       end
-
-      it 'should raise an error if aggregation :sum is spesicied but no :value_column' do
-        lambda { @report.send(:ensure_valid_options, { :aggregation => :sum }) }.should raise_error(ArgumentError)
-      end
-
     end
 
     describe 'for context :run' do

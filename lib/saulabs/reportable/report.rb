@@ -60,12 +60,12 @@ module Saulabs
       #   when specified, the report will only include data for the +:limit+ reporting periods until this date.
       #
       def initialize(klass, name, options = {})
-        ensure_valid_options(options)
         @klass        = klass
         @name         = name
         @date_column  = (options[:date_column] || "created_at").to_s
         @aggregation  = options[:aggregation] || :count
         @value_column = (options[:value_column] || (@aggregation == :count ? 'id' : name)).to_s
+        ensure_valid_options(options)
         @options = {
           :limit      => options[:limit] || 100,
           :conditions => options[:conditions] || [],
@@ -150,7 +150,7 @@ module Saulabs
                 raise ArgumentError.new("Invalid option #{k}!") unless [:limit, :aggregation, :grouping, :date_column, :value_column, :conditions, :live_data, :end_date, :columns, :joins].include?(k)
               end
               raise ArgumentError.new("Invalid aggregation #{options[:aggregation]}!") if options[:aggregation] && ![:count, :sum, :maximum, :minimum, :average].include?(options[:aggregation])
-              raise ArgumentError.new('The name of the column holding the value to sum has to be specified for aggregation :sum!') if [:sum, :maximum, :minimum, :average].include?(options[:aggregation]) && !options.key?(:value_column)
+              raise ArgumentError.new('The name of the column holding the value to sum has to be specified for aggregation :sum!') if [:sum, :maximum, :minimum, :average].include?(options[:aggregation]) && !@value_column
             when :run
               options.each_key do |k|
                 raise ArgumentError.new("Invalid option #{k}!") unless [:limit, :conditions, :grouping, :live_data, :end_date, :joins].include?(k)
